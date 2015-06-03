@@ -2,6 +2,8 @@ package com.training.JenkinsTest;
 
 import java.util.List;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NotFoundException;
@@ -16,9 +18,12 @@ import org.openqa.selenium.support.ui.LoadableComponent;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
-public abstract class BasePage<T extends BasePage<T>> extends LoadableComponent<T> {
+//public abstract class BasePage<T extends BasePage<T>> extends LoadableComponent<T> {
+public abstract class BasePage<T extends BasePage<T>> extends
+		LoadableComponent<T> {
 
 	protected WebDriver driver;
+	protected Logger log = LogManager.getLogger(this.getClass());
 
 	@FindBy(xpath = "//a[@href ='/logout']")
 	private WebElement logoutLink;
@@ -28,14 +33,14 @@ public abstract class BasePage<T extends BasePage<T>> extends LoadableComponent<
 	private String popupMenuItemXpath = "//div[@id='search-box-completion']//ul//li[contains(text(),'{0}')]";
 
 	private WebElement q;
-	
+
 	@FindBy(css = ".error")
 	private WebElement error;
 
 	public BasePage(WebDriver wd) {
 		this(wd, false);
 	}
-	
+
 	protected BasePage(WebDriver driver, boolean verifyPageIsLoaded) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
@@ -45,7 +50,7 @@ public abstract class BasePage<T extends BasePage<T>> extends LoadableComponent<
 	}
 
 	public abstract String getPageUrl();
-	
+
 	@Override
 	protected void load() {
 		driver.get(getPageUrl());
@@ -73,9 +78,7 @@ public abstract class BasePage<T extends BasePage<T>> extends LoadableComponent<
 		} catch (NotFoundException e) {
 			// does nothing
 		}
-
 		return new MainPage(driver, true);
-
 	}
 
 	public String getLoggedInUserName() {
@@ -83,15 +86,15 @@ public abstract class BasePage<T extends BasePage<T>> extends LoadableComponent<
 	}
 
 	public interface SearchRequest {
-		
+
 		public String search(List<String> results);
-		
+
 	}
-	
-//	public UserPage searchForUser(String criteria, SearchRequest request) {
-//		
-//	}
-	
+
+	// public UserPage searchForUser(String criteria, SearchRequest request) {
+	//
+	// }
+
 	public UserPage searchForUser(String searchCriteria, String userName) {
 		q.clear();
 		q.sendKeys(searchCriteria);
@@ -104,6 +107,7 @@ public abstract class BasePage<T extends BasePage<T>> extends LoadableComponent<
 			throw new RuntimeException("User with name '" + userName
 					+ "' was not found");
 		}
+		log.info("User with name '" + userName + "' was found");
 		Actions act = new Actions(driver);
 		act.moveToElement(popupMenuItem).click(popupMenuItem)
 				.sendKeys(Keys.ENTER).build().perform();

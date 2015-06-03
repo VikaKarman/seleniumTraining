@@ -41,12 +41,14 @@ public class SignUpPage extends BasePage<SignUpPage> {
 
 	public SignUpSuccessPage signUp(String userName, String pwd1, String pwd2,
 			String fullName, String emailAddr) {
+		log.info(">> Try to create user with valid credentials");
 		populateFieldsAndSubmit(userName, pwd1, pwd2, fullName, emailAddr);
 		return new SignUpSuccessPage(driver, true);
 	}
 
 	public SignUpErrorPage failedSignUp(String userName, String pwd1,
 			String pwd2, String fullName, String emailAddr) {
+		log.info(">> Try to create user with invalid credentials");
 		populateFieldsAndSubmit(userName, pwd1, pwd2, fullName, emailAddr);
 		return new SignUpErrorPage(driver, true);
 	}

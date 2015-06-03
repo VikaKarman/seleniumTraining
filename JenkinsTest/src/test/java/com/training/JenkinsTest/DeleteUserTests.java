@@ -21,7 +21,7 @@ public class DeleteUserTests {
 	public void deleteUserTest() {
 		String userName = "testuser #777";
 		loginPage.searchForUser("#", userName).deleteUser();
-
+		
 		Assert.assertEquals(loginPage.searchForNonexistentUser(userName)
 				.getErrorText(), "Nothing seems to match");
 	}

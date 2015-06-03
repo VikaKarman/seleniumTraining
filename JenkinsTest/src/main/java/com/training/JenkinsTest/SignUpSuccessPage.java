@@ -36,7 +36,7 @@ public class SignUpSuccessPage extends LoadableComponent<SignUpSuccessPage> {
 		try {
 			new WebDriverWait(driver, 5)
 					.until(ExpectedConditions.presenceOfElementLocated(By
-							.xpath("//div[@id='main-panel-content']//h1[text() = 'Success']")));
+							.xpath("//div[@id='main-panel-content']//h1")));
 			System.out.println(">>>> User created");
 		} catch (TimeoutException e) {
 			Assert.fail("New user was not created");

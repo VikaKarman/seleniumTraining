@@ -44,6 +44,7 @@ public class UserPage extends BasePage<UserPage> {
 			new WebDriverWait(driver, 2).until(ExpectedConditions
 					.presenceOfElementLocated(By.xpath("//h1[contains(text(),'"
 							+ userName + "')]")));
+			log.info(">>User page is opened for user " + userName);
 		} catch (TimeoutException e) {
 			Assert.assertTrue(false, "User Page was not opened for user "
 					+ userName);
@@ -53,6 +54,12 @@ public class UserPage extends BasePage<UserPage> {
 	@Override
 	public String getPageUrl() {
 		return USER_URL;
+	}
+	
+	public void verifyUserExists(){
+		driver.get(USER_URL + "/" + userName);
+		additionalVerification();
+		
 	}
 
 }

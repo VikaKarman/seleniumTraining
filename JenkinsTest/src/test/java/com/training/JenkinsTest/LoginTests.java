@@ -1,32 +1,26 @@
 package com.training.JenkinsTest;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class LoginTests {
-	private WebDriver driver;
+import com.training.JenkinsTest.utils.WebDriverManager;
+
+public class LoginTests extends BaseTest {
 	private LoginPage loginPage;
 	private SignUpPage signUpPage;
 	private String user1 = "testuser_" + CommonMethods.getUniqueId();
 	private String userfn1;
 	private String user2 = "testuser_" + CommonMethods.getUniqueId();
 	private String expectedErrorText = "Invalid login information. Please try again.\nTry again";
-	private List<String> users;
 
 	@BeforeClass
 	public void classSetup() {
-		driver = new FirefoxDriver();
+		System.setProperty("lang", "fr");
+		driver = WebDriverManager.getDriver();
 		loginPage = new LoginPage(driver, false);
 		signUpPage = new SignUpPage(driver, false);
-		users = new ArrayList<String>();
 		signUpPage.get();
 		userfn1 = user1.replace("_", " #");
 		signUpPage.signUp(user1, "1", "1", userfn1, user1 + "@gmail.com");
@@ -43,18 +37,17 @@ public class LoginTests {
 
 	@Test
 	public void loginWithUserWithFullNameTest() {
-
+		logger.info("### Login using Login link. User has full name");
 		MainPage mainPage = new MainPage(driver, false).get();
 
-		Assert.assertEquals(
-				mainPage.goToLogin().login(user1, "1")
-						.getLoggedInUserName(), userfn1);
+		Assert.assertEquals(mainPage.goToLogin().login(user1, "1")
+				.getLoggedInUserName(), userfn1);
 
 	}
 
 	@Test
 	public void loginWithUserWithEmptyFullNameTest() {
-
+		logger.info("### Login with user with blank full name");
 		Assert.assertEquals(loginPage.login(user2, "1").getLoggedInUserName(),
 				user2);
 
@@ -62,13 +55,15 @@ public class LoginTests {
 
 	@Test
 	public void loginWithEmptyIDAndPasswordTest() {
+		logger.info("### Login with blank credentials");
 		Assert.assertEquals(loginPage.loginError("", "").getErrorText(),
 				expectedErrorText);
 
 	}
 
 	@Test
-	public void loginWithBlankPasswordTest(){
+	public void loginWithBlankPasswordTest() {
+		logger.info("### Login with user with blank password");
 		Assert.assertEquals(loginPage.loginError(user1, "").getErrorText(),
 				expectedErrorText);
 
@@ -76,18 +71,10 @@ public class LoginTests {
 
 	@Test
 	public void loginWithNonexistentUserTest() {
+		logger.info("### Login with nonexistent user");
 		Assert.assertEquals(
 				loginPage.loginError("testuser_" + CommonMethods.getUniqueId(),
 						"").getErrorText(), expectedErrorText);
-	}
-
-	@AfterClass
-	public void classEnd(){
-		loginPage.get().login("1", "1");
-		for (String user: users){
-			loginPage.searchForUser(user, user).deleteUser();
-		}
-		driver.quit();
 	}
 
 }

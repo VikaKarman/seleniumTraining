@@ -25,12 +25,14 @@ public class MainPage extends BasePage<MainPage> {
 	private WebElement signupLink;
 
 	public SignUpPage goToSignUp() {
+		log.info("Go to Sign Up page...");
 		logout();
 		signupLink.click();
 		return new SignUpPage(driver, true);
 	}
 
 	public LoginPage goToLogin() {
+		log.info("Go to Login page...");
 		logout();
 		loginLink.click();
 		return new LoginPage(driver, true);
