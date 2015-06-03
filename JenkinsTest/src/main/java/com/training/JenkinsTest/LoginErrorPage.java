@@ -1,43 +1,31 @@
 package com.training.JenkinsTest;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
+import static com.training.JenkinsTest.Constants.LOGIN_ERROR_URL;
+
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.LoadableComponent;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
-public class LoginErrorPage extends LoadableComponent<LoginErrorPage> {
-	private WebDriver driver;
-	
-	public LoginErrorPage(WebDriver driver, boolean verifyPageIsLoaded){
-		this.driver = driver;
-		if (verifyPageIsLoaded)
-			isLoaded();
+public class LoginErrorPage extends BasePage<LoginErrorPage> {
+
+	public LoginErrorPage(WebDriver driver) {
+		super(driver, false);
 	}
 	
-	@Override
-	protected void load() {
-		driver.get("http://seltr-kbp1-1.synapse.com:8080/loginError");
+	protected LoginErrorPage(WebDriver driver, boolean verifyPageIsLoaded) {
+		super(driver, verifyPageIsLoaded);
 	}
 
-	@Override
-	protected void isLoaded() throws Error {
-		String url = driver.getCurrentUrl();
-		Assert.assertTrue(url.endsWith("/loginError"),
-				"Not on the login error page: " + url);
+	@FindBy(xpath = "//div[@id='main-panel-content']//div[contains(@style,'color:red')]")
+	private WebElement error;
+
+	public String getErrorText() {
+		return error.getText();
 	}
-	
-	public boolean isErrorTextDisplayed(){
-		try {
-			new WebDriverWait(driver, 5)
-					.until(ExpectedConditions.presenceOfElementLocated(By
-							.xpath("//*[contains(text(),'Invalid login information. Please try again.')]")));
-			return true;
-		} catch (TimeoutException e) {
-			return false;
-		}
+
+	@Override
+	public String getPageUrl() {
+		return LOGIN_ERROR_URL;
 	}
 
 }

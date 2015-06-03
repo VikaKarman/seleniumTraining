@@ -1,59 +1,48 @@
 package com.training.JenkinsTest;
 
+import static com.training.JenkinsTest.Constants.LOGIN_URL;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.LoadableComponent;
-import org.testng.Assert;
 
-public class LoginPage extends LoadableComponent<LoginPage> {
-	private WebDriver driver;
+public class LoginPage extends BasePage<LoginPage> {
 
+	public LoginPage(WebDriver driver) {
+		super(driver, false);
+	}
+	
+	protected LoginPage(WebDriver driver, boolean verifyPageIsLoaded) {
+		super(driver, verifyPageIsLoaded);
+	}
+	
 	private WebElement j_username;
 	private WebElement j_password;
 	private WebElement login;
-	
-	public LoginPage(WebDriver driver, boolean verifyPageIsLoaded) {
-		this.driver = driver;
-		PageFactory.initElements(driver, this);
-		if (verifyPageIsLoaded)
-			isLoaded();
-	}
 
-	@Override
-	protected void load() {
-		driver.get("http://seltr-kbp1-1.synapse.com:8080/login?from=%2F");
-
-	}
-
-	@Override
-	protected void isLoaded() throws Error {
-		String url = driver.getCurrentUrl();
-		Assert.assertTrue(url.endsWith("/login?from=%2F"),
-				"Not on the login page: " + url);
-	}
-
-	private void clearAndType(WebElement field, String text) {
-		field.clear();
-		field.sendKeys(text);
-	}
-	
-	private void submit(){
+	private void submit() {
 		login.submit();
 	}
-	
-	public MainPage login(String userName, String pwd){
+
+	private void populateFieldsAndSubmit(String userName, String pwd) {
 		clearAndType(j_username, userName);
 		clearAndType(j_password, pwd);
 		submit();
+
+	}
+
+	public MainPage login(String userName, String pwd) {
+		populateFieldsAndSubmit(userName, pwd);
 		return new MainPage(driver, true);
 	}
-	
-	public LoginErrorPage loginError(String userName, String pwd){
-		clearAndType(j_username, userName);
-		clearAndType(j_password, pwd);
-		submit();
+
+	public LoginErrorPage loginError(String userName, String pwd) {
+		populateFieldsAndSubmit(userName, pwd);
 		return new LoginErrorPage(driver, true);
+	}
+	
+	@Override
+	public String getPageUrl() {
+		return LOGIN_URL;
 	}
 
 
